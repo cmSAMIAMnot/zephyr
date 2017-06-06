@@ -93,6 +93,52 @@ static inline u8_t _get_num_regions(void)
 	return (u8_t)type;
 }
 
+static const char *const region_rwprot[] = {
+  "----",
+  "rw--",
+  "rwr-",
+  "rwrw",
+  "Reserved",
+  "r---",
+  "r-r-",
+  "r-r-",
+};
+
+static const char *const region_size[] = {
+  "Reserved",
+  "Reserved",
+  "Reserved",
+  "Reserved",
+  "32B",
+  "64B",
+  "128B",
+  "256B",
+  "512B",
+  "1K",
+  "2K",
+  "4K",
+  "8K",
+  "16K",
+  "32K",
+  "64K",
+  "128K",
+  "256K",
+  "512K",
+  "1M",
+  "2M",
+  "4M",
+  "8M",
+  "16M",
+  "32M",
+  "64M",
+  "128M",
+  "256M",
+  "512M",
+  "1G",
+  "2G",
+  "4G"
+};
+
 static void _region_init(u32_t index, u32_t region_addr,
 			 u32_t region_attr)
 {
@@ -102,7 +148,13 @@ static void _region_init(u32_t index, u32_t region_addr,
 	ARM_MPU_DEV->rbar = (region_addr & REGION_BASE_ADDR_MASK)
 				| REGION_VALID | index;
 	ARM_MPU_DEV->rasr = region_attr | REGION_ENABLE;
-	SYS_LOG_DBG("[%d] 0x%08x 0x%08x", index, region_addr, region_attr);
+	SYS_LOG_DBG("[%d] 0x%08x 0x%08x %s %s %s",
+		    index,
+		    region_addr,
+		    region_attr,
+		    region_size[(region_attr >> 1) & 0x1F ],
+		    region_rwprot[(region_attr >> 24) & 7],
+		    (region_attr & NOT_EXEC) ? "" : "x");
 }
 
 /**
@@ -453,5 +505,10 @@ static int arm_mpu_init(struct device *arg)
 	return 0;
 }
 
+#if defined(CONFIG_SYS_LOG)
+SYS_INIT(arm_mpu_init, POST_KERNEL,
+	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+#else
 SYS_INIT(arm_mpu_init, PRE_KERNEL_1,
 	 CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+#endif

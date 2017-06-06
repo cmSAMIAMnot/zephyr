@@ -75,10 +75,13 @@ static void _region_init(u32_t index, u32_t region_base,
 		SYSMPU->WORD[index][3] = SYSMPU_WORD_VLD_MASK;
 	}
 
-	SYS_LOG_DBG("[%d] 0x%08x 0x%08x 0x%08x 0x%08x", index,
+	SYS_LOG_DBG("[%d] 0x%08x 0x%08x 0x%08x (%s%s%s) 0x%08x", index,
 		    SYSMPU->WORD[index][0],
 		    SYSMPU->WORD[index][1],
 		    SYSMPU->WORD[index][2],
+		    (SYSMPU->WORD[index][2] & MPU_REGION_READ) ? "r" : "",
+		    (SYSMPU->WORD[index][2] & MPU_REGION_WRITE) ? "w" : "",
+		    (SYSMPU->WORD[index][2] & MPU_REGION_EXEC) ? "x" : "",
 		    SYSMPU->WORD[index][3]);
 }
 
