@@ -168,6 +168,12 @@ config APPLICATION_MEMORY
 	  separate them into application and kernel areas. The application area
 	  will have the project-level application objects and any libraries
 	  including the C library in it.
+config APP_SHARED_MEM
+	bool
+	prompt "Compartmentalize application memory"
+	default n
+	help
+	  Compartmentalized applicaiton memory
 
 menu "Kernel Debugging and Metrics"
 
